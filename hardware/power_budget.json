@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "project": "AXLE",
+  "status": "engineering_estimate_not_measurement",
+  "design_loads_w": {
+    "compute_module": 25,
+    "carrier_nvme_and_usb_overhead": 8,
+    "touch_display": 15,
+    "microphone_and_audio_io": 5,
+    "network_and_phone_tether": 5,
+    "telemetry_and_physical_controls": 5,
+    "cooling_fans": 5
+  },
+  "target_dc_dc_capacity_w": 100,
+  "notes": [
+    "The 100 W target excludes the vehicle speaker amplifier.",
+    "Loads are conservative design allocations, not measured consumption.",
+    "Final converter sizing must use measured worst-case draw and the selected converter's temperature derating.",
+    "The Jetson Orin Nano developer kit uses a 19 V input supply; production carrier rails may differ."
+  ]
+}

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#080b10">
+  <title>AXLE</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <div class="eyebrow">AUTOMOTIVE EXPERIENCE & LOCAL EDGE</div>
+        <h1>AXLE</h1>
+      </div>
+      <div class="status-cluster">
+        <span id="motion" class="pill">MOTION …</span>
+        <span id="ai" class="pill">AI …</span>
+        <span id="uplink" class="pill">UPLINK …</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="orb" aria-hidden="true"></div>
+      <div>
+        <div class="eyebrow">LOCAL COPILOT</div>
+        <h2>Ready without the cloud.</h2>
+        <p id="policyText">Loading vehicle interaction policy…</p>
+      </div>
+    </section>
+
+    <section class="controls">
+      <button class="tile primary" id="voiceButton" type="button">
+        <span class="tile-label">VOICE</span>
+        <strong>Push to talk</strong>
+        <small>Local capture, transcription, inference, speech, and playback.</small>
+      </button>
+      <button class="tile" type="button" disabled>
+        <span class="tile-label">MEDIA</span>
+        <strong>Audio graph</strong>
+        <small>PipeWire integration planned.</small>
+      </button>
+      <button class="tile" type="button" disabled>
+        <span class="tile-label">VEHICLE</span>
+        <strong>Read-only telemetry</strong>
+        <small>No actuation path in v1.</small>
+      </button>
+    </section>
+
+    <section class="console">
+      <div class="console-head">
+        <span>Parked / development input</span>
+        <span>LOCAL ONLY</span>
+      </div>
+      <div id="conversation" class="conversation" aria-live="polite">
+        <div class="message system">AXLE Core is local-first. If the local model is down, requests fail closed instead of silently leaving the vehicle.</div>
+      </div>
+      <form id="askForm">
+        <input id="prompt" autocomplete="off" placeholder="Ask AXLE…" maxlength="4000">
+        <button id="send" type="submit">Send</button>
+      </form>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

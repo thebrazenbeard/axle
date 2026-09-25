@@ -1,0 +1,21 @@
+[Unit]
+Description=AXLE Local Edge Core
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/axle
+Environment=PYTHONPATH=/opt/axle/src
+ExecStart=/usr/bin/python3 -m axle.server --config /etc/axle/axle.toml
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/axle
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "axle-local-edge"
+version = "0.2.0"
+description = "Local-first AI runtime for an in-vehicle touchscreen computer"
+requires-python = ">=3.11"
+license = {text = "Proprietary"}
+authors = [{name = "Patrick Sims"}]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

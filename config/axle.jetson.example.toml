@@ -1,0 +1,33 @@
+[server]
+host = "127.0.0.1"
+port = 8787
+ui_dir = "ui"
+
+[ai]
+llm_base_url = "http://127.0.0.1:8080"
+llm_model = "local"
+llm_timeout_seconds = 30.0
+allow_cloud_fallback = false
+
+[safety]
+motion_state = "unknown"
+
+[voice]
+enabled = true
+work_dir = "/var/lib/axle/voice"
+stt_model = "/opt/axle/models/whisper/ggml-base.en.bin"
+tts_model = "en_US-lessac-medium"
+command_timeout_seconds = 120.0
+
+capture_command = [
+  "pw-record", "--rate=16000", "--channels=1", "--format=s16", "{wav}"
+]
+stt_command = [
+  "/opt/whisper.cpp/build/bin/whisper-cli",
+  "-m", "{model}", "-f", "{wav}", "-otxt", "-of", "{out}", "-nt"
+]
+tts_command = [
+  "/opt/axle/venv/bin/python", "-m", "piper",
+  "-m", "{model}", "-f", "{wav}", "--", "{text}"
+]
+playback_command = ["pw-play", "{wav}"]
