@@ -10,7 +10,7 @@ A permanent vehicle product needs ruggedized compute/carrier hardware, automotiv
 
 ## Display
 
-Prototype target: 7–10 inch capacitive touchscreen, HDMI/DP plus USB touch, high brightness preferred. Mounting must not obstruct driver sightlines, required controls, or air bags.
+Prototype target: 7–10 inch capacitive touchscreen, at least 1280x800, USB touch, and high brightness. The Orin Nano developer kit exposes DisplayPort, so DisplayPort-native input is preferred; HDMI-only panels require a validated active DP-to-HDMI adapter. Mounting must not obstruct driver sightlines, required controls, or air bags.
 
 ## Audio
 
@@ -29,7 +29,7 @@ Preserve a fail-safe path for critical factory chimes/audio.
 
 ## Microphones
 
-Use a directional cabin microphone or small array near the driver with echo/noise processing. Road, HVAC, and tire noise are first-order constraints.
+Prototype reference: Seeed Studio ReSpeaker XVF3800 USB 4-Mic Array, which provides a current USB four-microphone platform with onboard AEC, AGC, beamforming, VAD, noise suppression, direction-of-arrival, and dereverberation. Road, HVAC, and tire noise remain first-order constraints and must be measured in the actual cabin.
 
 ## Phone bridge
 
@@ -37,7 +37,7 @@ Support USB tethering and Wi-Fi hotspot. USB is preferred when practical because
 
 ## Vehicle telemetry
 
-Use a Linux-supported USB-to-CAN interface only when vehicle-specific work requires it. SocketCAN exposes adapters as Linux network interfaces. Do not assume OBD-II exposes every desired signal or that undocumented CAN IDs are portable between vehicles.
+Use a Linux/SocketCAN-supported interface only when vehicle-specific work requires it. PEAK PCAN-USB FD is the current bench reference. Because generic adapters can transmit, production v1 also requires controller/gateway listen-only enforcement and an independent no-TX qualification test. Do not assume OBD-II exposes every desired signal or that undocumented CAN IDs are portable between vehicles.
 
 ## Power
 
@@ -48,3 +48,15 @@ Use fused inputs, automotive-rated DC/DC conversion, reverse-polarity/transient 
 ## Thermal qualification
 
 Measure cold start, hot soak, sustained inference, full display brightness, and simultaneous tether/charging load before calling hardware installation-ready.
+
+
+## Contract and build documents
+
+Detailed, tested hardware state is maintained in:
+
+- `hardware/requirements.json`
+- `hardware/reference_bom.json`
+- `hardware/power_budget.json`
+- `docs/HARDWARE_REQUIREMENTS.md`
+- `docs/HARDWARE_BUILD.md`
+- `docs/HARDWARE_QUALIFICATION.md`

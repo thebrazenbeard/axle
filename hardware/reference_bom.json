@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0",
+  "project": "AXLE",
+  "purpose": "Prototype reference BOM; not an automotive-qualified released BOM.",
+  "items": [
+    {
+      "id": "BOM-COMPUTE-001",
+      "subsystem": "compute",
+      "reference": "NVIDIA Jetson Orin Nano Super Developer Kit",
+      "deployment_class": "prototype_only",
+      "automotive_qualified": false,
+      "selection": "reference",
+      "notes": "8 GB LPDDR5; up to 67 TOPS; 7/15/25 W module modes. NVIDIA states developer kits are not for production use.",
+      "source_url": "https://developer.nvidia.com/embedded/jetson-modules"
+    },
+    {
+      "id": "BOM-STORAGE-001",
+      "subsystem": "storage",
+      "reference": "512 GB or larger M.2 2280 NVMe SSD",
+      "deployment_class": "prototype",
+      "automotive_qualified": false,
+      "selection": "class_requirement",
+      "notes": "Jetson Orin Nano developer kit exposes M.2 Key-M Type 2280 PCIe storage. Prefer endurance and temperature margin over peak benchmark speed.",
+      "source_url": "https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/hardware_layout.html"
+    },
+    {
+      "id": "BOM-DISPLAY-001",
+      "subsystem": "display",
+      "reference": "7-10 inch high-brightness capacitive USB-touch display",
+      "deployment_class": "prototype",
+      "automotive_qualified": false,
+      "selection": "class_requirement",
+      "notes": "DisplayPort-native input is preferred on the Orin Nano developer kit. HDMI-only panels require a separately validated active DisplayPort-to-HDMI adapter.",
+      "source_url": "https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/hardware_layout.html"
+    },
+    {
+      "id": "BOM-MIC-001",
+      "subsystem": "microphone",
+      "reference": "Seeed Studio ReSpeaker XVF3800 USB 4-Mic Array",
+      "deployment_class": "prototype",
+      "automotive_qualified": false,
+      "selection": "reference",
+      "notes": "Current XVF3800 reference provides four microphones plus AEC, AGC, DoA, beamforming, VAD, noise suppression, and dereverberation. Cabin validation is still required.",
+      "source_url": "https://wiki.seeedstudio.com/respeaker_xvf3800_introduction/"
+    },
+    {
+      "id": "BOM-AUDIO-001",
+      "subsystem": "audio",
+      "reference": "Linux UAC-compatible USB audio interface with stereo line output",
+      "deployment_class": "prototype",
+      "automotive_qualified": false,
+      "selection": "class_requirement",
+      "notes": "Match output electrically to the vehicle-specific AUX/amplifier integration path; do not directly drive factory digital audio buses.",
+      "source_url": null
+    },
+    {
+      "id": "BOM-NET-001",
+      "subsystem": "network",
+      "reference": "Jetson onboard Wi-Fi/Bluetooth plus user phone USB tether",
+      "deployment_class": "prototype",
+      "automotive_qualified": false,
+      "selection": "reference",
+      "notes": "WAN is optional. USB tether is the preferred first uplink; Wi-Fi hotspot is the fallback.",
+      "source_url": "https://developer.nvidia.com/embedded/learn/get-started-jetson-orin-nano-devkit"
+    },
+    {
+      "id": "BOM-POWER-001",
+      "subsystem": "power",
+      "reference": "Automotive protected DC/DC and ignition/shutdown controller",
+      "deployment_class": "vehicle_install_required",
+      "automotive_qualified": null,
+      "selection": "not_selected",
+      "notes": "No generic hobby converter is accepted as the vehicle-install reference. Selection requires transient/cold-crank evidence, thermal derating, fuse design, quiescent-current validation, and a regulated rail compatible with the chosen compute carrier.",
+      "source_url": null
+    },
+    {
+      "id": "BOM-CAN-001",
+      "subsystem": "vehicle_bus",
+      "reference": "PEAK-System PCAN-USB FD",
+      "deployment_class": "bench_telemetry_reference",
+      "automotive_qualified": false,
+      "selection": "conditional",
+      "notes": "Linux/SocketCAN-capable reference for bench telemetry. It can transmit, so it is not by itself sufficient for the production v1 receive-only boundary; listen-only and lower-level TX inhibition must be qualified.",
+      "source_url": "https://www.peak-system.com/fileadmin/media/linux/index.php"
+    },
+    {
+      "id": "BOM-CONTROL-001",
+      "subsystem": "controls",
+      "reference": "Momentary physical push-to-talk button through USB HID or isolated GPIO input",
+      "deployment_class": "prototype",
+      "automotive_qualified": false,
+      "selection": "class_requirement",
+      "notes": "The control produces only a bounded voice-trigger event. It is not a general GPIO-to-effect bridge.",
+      "source_url": null
+    },
+    {
+      "id": "BOM-ENCLOSURE-001",
+      "subsystem": "enclosure",
+      "reference": "Custom ventilated mechanically restrained compute/power enclosure",
+      "deployment_class": "prototype_then_vehicle_specific",
+      "automotive_qualified": null,
+      "selection": "not_selected",
+      "notes": "Final mechanical design depends on vehicle mounting location, airflow, cable strain relief, and service access.",
+      "source_url": null
+    }
+  ]
+}

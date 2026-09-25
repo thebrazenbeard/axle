@@ -6,7 +6,30 @@ Current branch: architecture, kiosk UI, local llama.cpp text path, core-enforced
 
 ## Stage 1 — local voice loop
 
-Deliver wake word -> VAD -> whisper.cpp -> AXLE Core -> llama.cpp -> Piper -> PipeWire, with barge-in, echo/noise handling, bounded moving-mode responses, and target-hardware latency measurements.
+### Stage 1A — executable push-to-talk path
+
+Implemented on the current frontier:
+
+- PipeWire WAV capture;
+- whisper.cpp transcription;
+- AXLE Core -> local llama.cpp;
+- Piper WAV synthesis;
+- PipeWire playback;
+- parked-only touchscreen trigger;
+- moving-capable hardware-button/wake-word trigger policy seams;
+- tested runtime state machine and subprocess boundaries.
+
+### Stage 1B — hands-free cabin completion
+
+Remaining:
+
+- openWakeWord sidecar;
+- physical-button adapter;
+- barge-in/cancel;
+- explicit PipeWire ducking;
+- echo/noise tuning on current microphone hardware;
+- bounded moving-mode spoken responses;
+- target-hardware latency and recognition measurements.
 
 ## Stage 2 — media/audio head unit
 

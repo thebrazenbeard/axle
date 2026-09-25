@@ -10,24 +10,24 @@ llm_timeout_seconds = 30.0
 allow_cloud_fallback = false
 
 [safety]
-# Fail closed by default. Use "parked" only for a stationary bench/demo unless
-# a trusted vehicle telemetry source is providing current motion state.
 motion_state = "unknown"
 
 [voice]
-enabled = false
+enabled = true
 work_dir = "/var/lib/axle/voice"
-stt_model = ""
-tts_model = ""
+stt_model = "/opt/axle/models/whisper/ggml-base.en.bin"
+tts_model = "en_US-lessac-medium"
 command_timeout_seconds = 120.0
-# Commands are argument arrays. AXLE never joins these into a shell string.
+
 capture_command = [
   "pw-record", "--rate=16000", "--channels=1", "--format=s16", "{wav}"
 ]
 stt_command = [
-  "whisper-cli", "-m", "{model}", "-f", "{wav}", "-otxt", "-of", "{out}", "-nt"
+  "/opt/whisper.cpp/build/bin/whisper-cli",
+  "-m", "{model}", "-f", "{wav}", "-otxt", "-of", "{out}", "-nt"
 ]
 tts_command = [
-  "python3", "-m", "piper", "-m", "{model}", "-f", "{wav}", "--", "{text}"
+  "/opt/axle/venv/bin/python", "-m", "piper",
+  "-m", "{model}", "-f", "{wav}", "--", "{text}"
 ]
 playback_command = ["pw-play", "{wav}"]

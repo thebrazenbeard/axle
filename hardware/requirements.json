@@ -1,0 +1,206 @@
+{
+  "schema_version": "1.0",
+  "project": "AXLE",
+  "requirements": [
+    {
+      "id": "HW-COMPUTE-001",
+      "subsystem": "compute",
+      "priority": "MUST",
+      "statement": "Core assistant, STT, TTS, UI, policy, and media-control functions shall remain usable with all WAN links disconnected.",
+      "verification": "Disable USB tether, Wi-Fi uplink, and Ethernet; execute the local voice acceptance sequence."
+    },
+    {
+      "id": "HW-COMPUTE-002",
+      "subsystem": "compute",
+      "priority": "MUST",
+      "statement": "Prototype compute shall sustain the configured local AI workload without thermal shutdown or involuntary reboot.",
+      "verification": "Run a 60-minute simultaneous STT/LLM/TTS thermal soak while recording clocks, temperature, throttling, and resets."
+    },
+    {
+      "id": "HW-COMPUTE-003",
+      "subsystem": "compute",
+      "priority": "MUST",
+      "statement": "A production vehicle unit shall use a production-supported module/carrier implementation rather than a Jetson developer kit.",
+      "verification": "Review released BOM and vendor lifecycle classification before installation qualification."
+    },
+    {
+      "id": "HW-STORAGE-001",
+      "subsystem": "storage",
+      "priority": "MUST",
+      "statement": "Primary storage shall be solid-state and sized for OS, local models, rollback image, logs, and offline media without operating near full capacity.",
+      "verification": "Verify installed capacity and require at least 20 percent free space at release-image acceptance."
+    },
+    {
+      "id": "HW-STORAGE-002",
+      "subsystem": "storage",
+      "priority": "SHOULD",
+      "statement": "Prototype storage should use NVMe rather than microSD for sustained model and log workloads.",
+      "verification": "Inspect block device topology and run sustained read/write health checks."
+    },
+    {
+      "id": "HW-DISPLAY-001",
+      "subsystem": "display",
+      "priority": "MUST",
+      "statement": "The primary UI shall use a 7 to 10 inch capacitive touchscreen with at least 1280x800 logical resolution.",
+      "verification": "Read display EDID/mode and verify touch coordinate mapping at all screen edges."
+    },
+    {
+      "id": "HW-DISPLAY-002",
+      "subsystem": "display",
+      "priority": "SHOULD",
+      "statement": "The installed panel should provide at least 800 nit rated brightness or equivalent validated daylight readability.",
+      "verification": "Review panel specification and perform direct-sun readability evaluation in the installed position."
+    },
+    {
+      "id": "HW-DISPLAY-003",
+      "subsystem": "display",
+      "priority": "MUST",
+      "statement": "The display installation shall not obstruct required controls, driver sightlines, or air-bag deployment zones.",
+      "verification": "Vehicle-specific physical installation review before road use."
+    },
+    {
+      "id": "HW-MIC-001",
+      "subsystem": "microphone",
+      "priority": "MUST",
+      "statement": "Voice capture shall provide a Linux-visible local audio input capable of 16 kHz mono 16-bit PCM for the reference STT path.",
+      "verification": "Record a WAV using the deployed PipeWire capture command and inspect rate, channel count, and sample format."
+    },
+    {
+      "id": "HW-MIC-002",
+      "subsystem": "microphone",
+      "priority": "SHOULD",
+      "statement": "Prototype voice capture should provide acoustic echo cancellation, beamforming, noise suppression, and voice activity detection suitable for cabin testing.",
+      "verification": "Run stationary and road-noise voice intelligibility tests with cabin audio playing."
+    },
+    {
+      "id": "HW-AUDIO-001",
+      "subsystem": "audio",
+      "priority": "MUST",
+      "statement": "AXLE audio output shall enter the vehicle audio chain through a line-level or vehicle-specific integration interface, not by direct connection to factory digital buses.",
+      "verification": "Inspect wiring and integration-module documentation."
+    },
+    {
+      "id": "HW-AUDIO-002",
+      "subsystem": "audio",
+      "priority": "MUST",
+      "statement": "Loss of AXLE compute power shall not eliminate safety-relevant factory chimes or required factory audio functions.",
+      "verification": "Power-loss test with the vehicle-specific audio integration path."
+    },
+    {
+      "id": "HW-AUDIO-003",
+      "subsystem": "audio",
+      "priority": "SHOULD",
+      "statement": "The audio path should provide enough isolation and grounding control to avoid alternator whine and USB ground-loop noise.",
+      "verification": "Measure/listen across engine-off, idle, and charging conditions at low and high audio gain."
+    },
+    {
+      "id": "HW-NET-001",
+      "subsystem": "network",
+      "priority": "MUST",
+      "statement": "AXLE shall support user-provided USB tethering and Wi-Fi hotspot connectivity without requiring an embedded cellular subscription.",
+      "verification": "Connect each supported tether mode independently and verify NetworkManager reports the uplink."
+    },
+    {
+      "id": "HW-NET-002",
+      "subsystem": "network",
+      "priority": "MUST",
+      "statement": "Loss of WAN shall not prevent local assistant startup or local voice operation.",
+      "verification": "Remove active tether during operation and repeat local voice acceptance."
+    },
+    {
+      "id": "HW-POWER-001",
+      "subsystem": "power",
+      "priority": "MUST",
+      "statement": "Vehicle battery power shall pass through an automotive-rated protected conversion stage before reaching AXLE compute or peripheral rails.",
+      "verification": "Review power-module qualification evidence and bench-test protected input/output behavior before installation."
+    },
+    {
+      "id": "HW-POWER-002",
+      "subsystem": "power",
+      "priority": "MUST",
+      "statement": "The power subsystem shall provide ignition-state sensing and controlled shutdown or sleep behavior after ignition-off.",
+      "verification": "Cycle ignition sense repeatedly and verify clean filesystem shutdown plus restart behavior."
+    },
+    {
+      "id": "HW-POWER-003",
+      "subsystem": "power",
+      "priority": "TARGET",
+      "statement": "Prototype vehicle power design shall reserve at least 100 W continuous DC/DC capacity for AXLE compute, display, storage, audio, cooling, and peripherals, excluding the vehicle speaker amplifier.",
+      "verification": "Compare measured worst-case draw with converter continuous rating and thermal derating."
+    },
+    {
+      "id": "HW-POWER-004",
+      "subsystem": "power",
+      "priority": "MUST",
+      "statement": "Battery-connected hardware shall include fused protection and a validated low-quiescent-current parked state.",
+      "verification": "Inspect fuse placement and measure ignition-off current after the configured sleep/shutdown interval."
+    },
+    {
+      "id": "HW-CAN-001",
+      "subsystem": "vehicle_bus",
+      "priority": "MUST",
+      "mode": "receive_only",
+      "transmit_enabled": false,
+      "statement": "AXLE v1 vehicle telemetry shall be receive-only; the deployed telemetry interface shall have no enabled transmit path.",
+      "verification": "Demonstrate application-level no-TX, controller listen-only configuration, and bus-monitor evidence showing zero AXLE-originated frames."
+    },
+    {
+      "id": "HW-CAN-002",
+      "subsystem": "vehicle_bus",
+      "priority": "SHOULD",
+      "mode": "receive_only",
+      "transmit_enabled": false,
+      "statement": "A production telemetry gateway should enforce transmit inhibition below the AI/UI process boundary, preferably at gateway/controller or physical transceiver level.",
+      "verification": "Attempt a transmit operation from an unprivileged and a compromised test process; verify no frame reaches the vehicle bus."
+    },
+    {
+      "id": "HW-CONTROL-001",
+      "subsystem": "controls",
+      "priority": "SHOULD",
+      "statement": "Provide a dedicated physical voice trigger that can be operated without targeting the touchscreen.",
+      "verification": "Road-test hardware-button voice initiation with the display interaction lock active."
+    },
+    {
+      "id": "HW-CONTROL-002",
+      "subsystem": "controls",
+      "priority": "MUST",
+      "statement": "A physical voice trigger shall enter AXLE through a bounded input interface and shall not grant vehicle-control authority.",
+      "verification": "Trace the input event to VoiceTrigger.HARDWARE_BUTTON and verify vehicle_write_enabled remains false."
+    },
+    {
+      "id": "HW-ENCLOSURE-001",
+      "subsystem": "enclosure",
+      "priority": "MUST",
+      "statement": "Compute, storage, wiring, and power conversion shall be mechanically restrained and protected from conductive debris and accidental contact.",
+      "verification": "Mechanical inspection of the complete installed assembly."
+    },
+    {
+      "id": "HW-THERMAL-001",
+      "subsystem": "thermal",
+      "priority": "MUST",
+      "statement": "The compute enclosure shall maintain stable operation under sustained local inference without repeated thermal throttling that breaks interaction latency.",
+      "verification": "Hot-soak inference test with temperature, clocks, throttling flags, and voice-turn latency logged."
+    },
+    {
+      "id": "HW-THERMAL-002",
+      "subsystem": "thermal",
+      "priority": "MUST",
+      "statement": "Cooling airflow shall not be blocked by the installed enclosure or adjacent vehicle trim.",
+      "verification": "Mechanical airflow inspection plus thermal soak in final mounting orientation."
+    },
+    {
+      "id": "HW-SERVICE-001",
+      "subsystem": "serviceability",
+      "priority": "SHOULD",
+      "statement": "NVMe storage, compute module/carrier, microphone, display, and telemetry adapter should remain replaceable without destructive removal of the vehicle harness.",
+      "verification": "Perform documented service removal/reinstallation on the prototype harness."
+    },
+    {
+      "id": "HW-SEC-001",
+      "subsystem": "security",
+      "priority": "SHOULD",
+      "statement": "Production hardware should provide a root-of-trust or secure-boot mechanism suitable for validating the AXLE boot/update chain.",
+      "verification": "Review production carrier/module security configuration and execute signed-image rejection test."
+    }
+  ]
+}

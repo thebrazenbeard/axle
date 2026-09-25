@@ -28,11 +28,23 @@ Touchscreen / voice
 
 ## Voice path
 
+Current executable Stage 1A path:
+
 ```text
-microphone -> wake word -> VAD/noise suppression -> whisper.cpp
--> AXLE Core policy/context -> llama.cpp -> capability broker
+touch / bounded trigger -> pw-record -> whisper.cpp
+-> AXLE Core policy/context -> llama.cpp
+-> Piper -> pw-play / PipeWire
+```
+
+Target hands-free Stage 1B path:
+
+```text
+microphone -> openWakeWord / physical button -> VAD/noise suppression
+-> whisper.cpp -> AXLE Core policy/context -> llama.cpp
 -> Piper -> PipeWire duck/mix -> vehicle audio
 ```
+
+Touch initiation is parked-only. Wake-word and hardware-button trigger types are allowed by moving-mode policy but their hardware/detector adapters remain separate bounded components.
 
 The assistant remains functional without WAN. Phone tethering enriches remote-data features later; it does not host cognition required for ordinary use.
 

@@ -32,7 +32,7 @@ AXLE turns a Linux edge computer mounted in the vehicle into a private, offline-
 | Vehicle telemetry | Linux SocketCAN | No |
 | Tether management | NetworkManager | Only for WAN |
 
-The runnable v0 core currently integrates the OpenAI-compatible local endpoint exposed by `llama.cpp`. Voice/audio and vehicle adapters are specified but deliberately separate from the first core.
+The runnable v0.2 core integrates the OpenAI-compatible local endpoint exposed by `llama.cpp` and an executable local push-to-talk path through PipeWire, whisper.cpp, Piper, and PipeWire playback. Wake-word and physical-button trigger types are policy-bound seams; the wake-word detector itself is still a remaining Stage 1 item.
 
 ## Quick start
 
@@ -62,11 +62,16 @@ make test
 
 ## Repository map
 
-- `src/axle/` — core service, policy engine, local-LLM adapter, and tether status.
-- `ui/` — low-distraction touchscreen UI served locally by AXLE Core.
-- `config/` — source-controlled safe-default configuration.
+- `src/axle/` — Core, local-LLM adapter, voice runtime, policy, and tether status.
+- `ui/` — low-distraction touchscreen UI with parked-only touch push-to-talk.
+- `config/` — safe defaults plus a Jetson voice example.
+- `hardware/` — tested hardware requirements, reference BOM, and power budget.
 - `docs/ARCHITECTURE.md` — subsystem boundaries and data flow.
-- `docs/HARDWARE.md` — compute, power, display, microphone, audio, and telemetry design.
+- `docs/VOICE_RUNTIME.md` — executable local voice path and remaining Stage 1 work.
+- `docs/HARDWARE_REQUIREMENTS.md` — human-readable hardware contract.
+- `docs/HARDWARE_BUILD.md` — bench-first prototype build sequence.
+- `docs/HARDWARE_QUALIFICATION.md` — qualification gates.
+- `docs/HARDWARE.md` — high-level hardware design.
 - `docs/SAFETY.md` — motion policy and vehicle-control boundary.
 - `docs/THREAT_MODEL.md` — trust boundaries and attack surfaces.
 - `docs/ROADMAP.md` — staged implementation plan.
@@ -75,6 +80,6 @@ make test
 
 ## Status
 
-This is an architecture + executable-core bootstrap, not a production automotive head unit. The NVIDIA developer kit described in the hardware notes is prototype hardware, not an automotive-qualified ECU.
+This is an architecture + executable-core + hardware-contract prototype, not a production automotive head unit. The NVIDIA developer kit is deliberately classified as prototype-only; the vehicle power stage and production receive-only telemetry gateway remain unselected until qualification evidence exists.
 
 AXLE's v1 vehicle boundary is **read only**. No AI response, plugin, web request, or UI action is permitted to transmit vehicle-bus commands.

@@ -17,6 +17,12 @@ class MotionState(str, Enum):
             return cls.UNKNOWN
 
 
+class VoiceTrigger(str, Enum):
+    TOUCH = "touch"
+    WAKE_WORD = "wake_word"
+    HARDWARE_BUTTON = "hardware_button"
+
+
 @dataclass(frozen=True)
 class InteractionPolicy:
     motion: MotionState
@@ -51,3 +57,11 @@ def policy_for(motion: MotionState) -> InteractionPolicy:
         vehicle_write_enabled=False,
         reason=reason,
     )
+
+
+def voice_trigger_allowed(policy: InteractionPolicy, trigger: VoiceTrigger) -> bool:
+    if not policy.voice_interaction_enabled:
+        return False
+    if trigger is VoiceTrigger.TOUCH:
+        return policy.motion is MotionState.PARKED
+    return trigger in {VoiceTrigger.WAKE_WORD, VoiceTrigger.HARDWARE_BUTTON}
