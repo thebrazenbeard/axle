@@ -10,21 +10,19 @@ The central rule is simple: **the phone is an uplink, not the brain**. Core inte
 
 ## Product idea
 
-AXLE turns a Linux edge computer mounted in the vehicle into a private, offline-capable copilot and media head unit. The reference stack is designed around:
+AXLE turns a Linux edge computer mounted in the vehicle into a private, offline-capable copilot and media head unit. The reference design combines:
 
-- a 7–10 inch capacitive touchscreen running a kiosk UI;
+- a 7–10 inch capacitive touchscreen running a local kiosk UI;
 - local wake-word detection, speech-to-text, language-model inference, and text-to-speech;
 - PipeWire-based mixing/ducking into the vehicle audio path;
-- USB or Wi-Fi phone tethering managed as an optional WAN connection;
-- read-only vehicle telemetry through a separately isolated gateway;
-- a motion-aware interaction policy that disables high-distraction manual interaction when motion is moving or unknown;
-- an effect broker architecture where model output is never vehicle-control authority.
+- USB or Wi-Fi phone tethering as optional WAN;
+- read-only vehicle telemetry through an isolated gateway;
+- a motion-aware policy that disables high-distraction manual interaction when motion is moving or unknown;
+- an effect-broker architecture where model output is never vehicle-control authority.
 
-## Reference AI stack
+## Reference stack
 
-AXLE intentionally treats inference engines as replaceable sidecars.
-
-| Function | Reference implementation | Network required |
+| Function | Reference implementation | WAN required |
 | --- | --- | --- |
 | Wake word | openWakeWord | No |
 | Speech-to-text | whisper.cpp | No |
@@ -34,7 +32,7 @@ AXLE intentionally treats inference engines as replaceable sidecars.
 | Vehicle telemetry | Linux SocketCAN | No |
 | Tether management | NetworkManager | Only for WAN |
 
-The runnable v0 core in this repository currently integrates the OpenAI-compatible local endpoint exposed by `llama.cpp`. Voice and vehicle adapters are specified but intentionally remain separate from the first core so that unsafe actuation does not accidentally appear as a side effect of infotainment work.
+The runnable v0 core currently integrates the OpenAI-compatible local endpoint exposed by `llama.cpp`. Voice/audio and vehicle adapters are specified but deliberately separate from the first core.
 
 ## Quick start
 
@@ -47,7 +45,14 @@ PYTHONPATH=src python -m axle.server --config config/axle.local.toml
 
 Then open `http://127.0.0.1:8787`.
 
-For a real local model, start `llama-server` on the configured endpoint first. The example expects an OpenAI-compatible endpoint at `http://127.0.0.1:8080/v1/chat/completions`.
+The example config fails closed with motion state `unknown`, so manual text is locked. **For a stationary bench/demo only**, edit `config/axle.local.toml` and set:
+
+```toml
+[safety]
+motion_state = "parked"
+```
+
+For a real local model, start `llama-server` on the configured endpoint first. The example expects `http://127.0.0.1:8080/v1/chat/completions`.
 
 Run verification with:
 
@@ -59,9 +64,9 @@ make test
 
 - `src/axle/` — core service, policy engine, local-LLM adapter, and tether status.
 - `ui/` — low-distraction touchscreen UI served locally by AXLE Core.
-- `config/` — source-controlled example configuration.
+- `config/` — source-controlled safe-default configuration.
 - `docs/ARCHITECTURE.md` — subsystem boundaries and data flow.
-- `docs/HARDWARE.md` — reference compute, power, display, microphone, audio, and telemetry design.
+- `docs/HARDWARE.md` — compute, power, display, microphone, audio, and telemetry design.
 - `docs/SAFETY.md` — motion policy and vehicle-control boundary.
 - `docs/THREAT_MODEL.md` — trust boundaries and attack surfaces.
 - `docs/ROADMAP.md` — staged implementation plan.
@@ -70,6 +75,6 @@ make test
 
 ## Status
 
-This branch is an architecture + executable-core bootstrap, not a production automotive head unit. The NVIDIA developer kit described in the hardware notes is prototype hardware, not an automotive-qualified ECU. Production installation requires appropriate power conditioning, thermal design, vibration resistance, enclosure design, EMC work, audio isolation, and vehicle-specific validation.
+This is an architecture + executable-core bootstrap, not a production automotive head unit. The NVIDIA developer kit described in the hardware notes is prototype hardware, not an automotive-qualified ECU.
 
 AXLE's v1 vehicle boundary is **read only**. No AI response, plugin, web request, or UI action is permitted to transmit vehicle-bus commands.

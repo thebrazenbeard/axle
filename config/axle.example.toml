@@ -10,6 +10,6 @@ llm_timeout_seconds = 30.0
 allow_cloud_fallback = false
 
 [safety]
-# Prototype/dev only. Production must derive motion from a trusted vehicle or
-# navigation signal and must fail closed to "unknown" when that signal is lost.
-motion_state = "parked"
+# Fail closed by default. For a stationary bench/demo only, copy this file to
+# config/axle.local.toml and explicitly set motion_state = "parked".
+motion_state = "unknown"
