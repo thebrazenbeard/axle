@@ -231,12 +231,10 @@ def make_handler(app: AxleApp, ui_dir: str):
                 return
 
             if path == "/api/voice/start":
-                try:
-                    payload = self._read_json()
-                except (ValueError, UnicodeDecodeError, json.JSONDecodeError):
-                    self._json(HTTPStatus.BAD_REQUEST, {"error": "invalid_json"})
-                    return
-                status, response = app.voice_start(str(payload.get("trigger", "")))
+                # The browser-facing endpoint is always a touch trigger.
+                # Wake-word and physical-button adapters must use a separate
+                # trusted local seam and cannot self-assert via UI JSON.
+                status, response = app.voice_start(VoiceTrigger.TOUCH.value)
                 self._json(status, response)
                 return
 

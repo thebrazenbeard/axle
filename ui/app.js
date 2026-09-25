@@ -112,8 +112,7 @@ voiceButton.addEventListener("click", async () => {
         message("system", "No speech was detected.");
       }
     } else {
-      const { response, payload } = await postJson(
-        "/api/voice/start", { trigger: "touch" });
+      const { response, payload } = await postJson("/api/voice/start");
       if (!response.ok) {
         message("error", payload.message || payload.error);
       } else {

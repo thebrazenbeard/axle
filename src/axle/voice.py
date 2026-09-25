@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Callable, Protocol
+import shutil
 import subprocess
 import tempfile
 
@@ -54,6 +55,7 @@ class VoiceRuntime:
         self.responder = responder
         self.work_root = work_root
         self.state = VoiceState.IDLE
+        self._session_dir: Path | None = None
         self._input_wav: Path | None = None
         self._output_wav: Path | None = None
 
@@ -63,15 +65,30 @@ class VoiceRuntime:
 
         self.work_root.mkdir(parents=True, exist_ok=True)
         session = Path(tempfile.mkdtemp(prefix="turn-", dir=self.work_root))
+        self._session_dir = session
         self._input_wav = session / "input.wav"
         self._output_wav = session / "reply.wav"
-        self.backend.start_capture(self._input_wav)
+        try:
+            self.backend.start_capture(self._input_wav)
+        except Exception:
+            self._cleanup_session()
+            raise
         self.state = VoiceState.LISTENING
 
+    def _cleanup_session(self) -> None:
+        if self._session_dir is not None:
+            shutil.rmtree(self._session_dir, ignore_errors=True)
+        self._session_dir = None
+        self._input_wav = None
+        self._output_wav = None
+
     def cancel(self) -> None:
-        if self.state is VoiceState.LISTENING:
-            self.backend.cancel_capture()
-        self.state = VoiceState.IDLE
+        try:
+            if self.state is VoiceState.LISTENING:
+                self.backend.cancel_capture()
+        finally:
+            self._cleanup_session()
+            self.state = VoiceState.IDLE
 
     def stop_and_respond(self) -> VoiceTurn:
         if self.state is not VoiceState.LISTENING:
@@ -99,6 +116,8 @@ class VoiceRuntime:
         except Exception:
             self.state = VoiceState.ERROR
             raise
+        finally:
+            self._cleanup_session()
 
 
 class LocalVoiceBackend:
@@ -125,6 +144,15 @@ class LocalVoiceBackend:
         self.command_timeout_seconds = command_timeout_seconds
         self._capture = None
 
+    def _run(self, command: list[str], **kwargs):
+        try:
+            return self.runner(command, **kwargs)
+        except (OSError, subprocess.SubprocessError) as exc:
+            executable = command[0] if command else "<empty>"
+            raise VoiceBackendError(
+                f"voice backend command failed: {executable}"
+            ) from exc
+
     def start_capture(self, wav_path: Path) -> None:
         if self._capture is not None:
             raise VoiceBusy("capture is already active")
@@ -135,22 +163,31 @@ class LocalVoiceBackend:
             out=str(wav_path.with_suffix("")),
             text="",
         )
-        self._capture = self.popen_factory(
-            command,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+        try:
+            self._capture = self.popen_factory(
+                command,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except OSError as exc:
+            executable = command[0] if command else "<empty>"
+            raise VoiceBackendError(
+                f"voice capture command failed: {executable}"
+            ) from exc
     def _stop_capture_process(self) -> None:
         if self._capture is None:
             raise VoiceBackendError("capture is not active")
         process = self._capture
         self._capture = None
-        process.terminate()
         try:
-            process.wait(timeout=2)
-        except subprocess.TimeoutExpired:
-            process.kill()
-            process.wait(timeout=2)
+            process.terminate()
+            try:
+                process.wait(timeout=2)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=2)
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise VoiceBackendError("voice capture process stop failed") from exc
 
     def stop_capture(self) -> None:
         self._stop_capture_process()
@@ -169,7 +206,7 @@ class LocalVoiceBackend:
             out=str(output_base),
             text="",
         )
-        self.runner(
+        self._run(
             command,
             check=True,
             timeout=self.command_timeout_seconds,
@@ -189,7 +226,7 @@ class LocalVoiceBackend:
             out=str(wav_path.with_suffix("")),
             text=text,
         )
-        self.runner(
+        self._run(
             command,
             check=True,
             timeout=self.command_timeout_seconds,
@@ -208,7 +245,7 @@ class LocalVoiceBackend:
             out=str(wav_path.with_suffix("")),
             text="",
         )
-        self.runner(
+        self._run(
             command,
             check=True,
             timeout=self.command_timeout_seconds,

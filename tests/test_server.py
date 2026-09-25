@@ -1,8 +1,12 @@
+import json
+import threading
 import unittest
 from http import HTTPStatus
+from http.server import ThreadingHTTPServer
+from urllib import error, request
 
 from axle.config import AxleConfig
-from axle.server import AxleApp
+from axle.server import AxleApp, make_handler
 from axle.voice import VoiceState, VoiceTurn
 
 
@@ -66,6 +70,37 @@ class ServerPolicyTests(unittest.TestCase):
         self.assertEqual(status, HTTPStatus.ACCEPTED)
         self.assertEqual(body["state"], "listening")
         self.assertEqual(voice.started, 1)
+    def test_browser_voice_endpoint_cannot_spoof_hardware_trigger(self):
+        voice = FakeVoiceRuntime()
+        config = AxleConfig(
+            motion_state="moving",
+            voice_enabled=True,
+            voice_stt_model="/models/whisper.bin",
+            voice_tts_model="voice",
+        )
+        app = AxleApp(config, voice_runtime=voice)
+        server = ThreadingHTTPServer(
+            ("127.0.0.1", 0), make_handler(app, "ui")
+        )
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            body = json.dumps({"trigger": "hardware_button"}).encode("utf-8")
+            req = request.Request(
+                f"http://127.0.0.1:{server.server_address[1]}/api/voice/start",
+                data=body,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with self.assertRaises(error.HTTPError) as caught:
+                request.urlopen(req, timeout=2)
+            self.assertEqual(caught.exception.code, HTTPStatus.LOCKED)
+            self.assertEqual(voice.started, 0)
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join()
+
     def test_voice_stop_returns_transcript_and_answer(self):
         voice = FakeVoiceRuntime()
         app = AxleApp(AxleConfig(

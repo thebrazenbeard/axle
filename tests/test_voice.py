@@ -1,8 +1,9 @@
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 
-from axle.voice import LocalVoiceBackend, VoiceBusy, VoiceRuntime, VoiceState, render_command
+from axle.voice import LocalVoiceBackend, VoiceBackendError, VoiceBusy, VoiceRuntime, VoiceState, render_command
 
 
 class FakeBackend:
@@ -40,6 +41,7 @@ class VoiceRuntimeTests(unittest.TestCase):
             runtime.start()
             self.assertEqual(runtime.state, VoiceState.LISTENING)
             turn = runtime.stop_and_respond()
+            self.assertEqual(list(Path(td).iterdir()), [])
 
         self.assertEqual(turn.transcript, "turn the music down")
         self.assertEqual(turn.answer, "heard: turn the music down")
@@ -100,6 +102,25 @@ class FakeProcess:
 
 
 class LocalVoiceBackendTests(unittest.TestCase):
+    def test_capture_stop_os_failure_is_wrapped(self):
+        class BrokenProcess:
+            def terminate(self):
+                raise OSError("device disappeared")
+
+        backend = LocalVoiceBackend(
+            capture_command=("pw-record", "{wav}"),
+            stt_command=("whisper-cli", "-m", "{model}", "-f", "{wav}"),
+            tts_command=("piper", "-m", "{model}", "-f", "{wav}", "--", "{text}"),
+            playback_command=("pw-play", "{wav}"),
+            stt_model="model",
+            tts_model="voice",
+            popen_factory=lambda command, **kwargs: BrokenProcess(),
+        )
+        with tempfile.TemporaryDirectory() as td:
+            backend.start_capture(Path(td) / "input.wav")
+            with self.assertRaises(VoiceBackendError):
+                backend.stop_capture()
+
     def test_subprocess_backend_uses_explicit_argument_vectors(self):
         commands = []
         process_holder = {}
@@ -144,6 +165,23 @@ class LocalVoiceBackendTests(unittest.TestCase):
         self.assertEqual(commands[2][-1], "hello back")
         self.assertEqual(commands[3], ["pw-play", str(reply_wav)])
         self.assertTrue(all(isinstance(command, list) for command in commands))
+
+    def test_subprocess_failures_are_wrapped_as_voice_backend_error(self):
+        def failing_runner(command, **kwargs):
+            raise subprocess.CalledProcessError(2, command)
+
+        backend = LocalVoiceBackend(
+            capture_command=("pw-record", "{wav}"),
+            stt_command=("whisper-cli", "-m", "{model}", "-f", "{wav}", "-otxt", "-of", "{out}"),
+            tts_command=("piper", "-m", "{model}", "-f", "{wav}", "--", "{text}"),
+            playback_command=("pw-play", "{wav}"),
+            stt_model="/models/base.en.bin",
+            tts_model="voice",
+            runner=failing_runner,
+        )
+        with tempfile.TemporaryDirectory() as td:
+            with self.assertRaises(VoiceBackendError):
+                backend.transcribe(Path(td) / "input.wav")
 
 
 if __name__ == "__main__":

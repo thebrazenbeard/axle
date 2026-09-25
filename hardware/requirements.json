@@ -168,6 +168,13 @@
       "verification": "Trace the input event to VoiceTrigger.HARDWARE_BUTTON and verify vehicle_write_enabled remains false."
     },
     {
+      "id": "HW-CONTROL-003",
+      "subsystem": "controls",
+      "priority": "MUST",
+      "statement": "The browser-facing voice-start interface shall always be classified as a touch trigger and shall not accept caller-asserted wake-word or hardware-button provenance.",
+      "verification": "Submit a moving-mode browser request that claims hardware-button provenance and require a locked response with no capture start."
+    },
+    {
       "id": "HW-ENCLOSURE-001",
       "subsystem": "enclosure",
       "priority": "MUST",

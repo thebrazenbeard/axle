@@ -26,14 +26,14 @@ Voice content and voice initiation are distinct.
 
 This prevents “voice is allowed” from accidentally making a touchscreen task permissible while driving.
 
-The current UI implements the `touch` trigger. Wake-word and physical-button adapters plug into the same Core seam.
+The current UI implements the `touch` trigger. The browser-facing HTTP start endpoint is hard-bound to touch semantics; a caller cannot self-assert `hardware_button` or `wake_word` in JSON. Future wake-word and physical-button adapters must enter through a separate trusted local seam.
 ## Runtime states
 
 `IDLE -> LISTENING -> PROCESSING -> SPEAKING -> IDLE`
 
 A second start while non-idle is rejected. Backend failure moves the runtime to `ERROR`; cancel/reset returns it to `IDLE`.
 
-An empty transcript does not call the LLM or TTS backend.
+An empty transcript does not call the LLM or TTS backend. Per-turn microphone audio, transcript files, and synthesized reply WAVs are ephemeral and are removed when the turn completes, is cancelled, or fails.
 
 ## Configuration
 
