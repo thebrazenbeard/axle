@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+config/axle.local.toml
+models/
+*.gguf
+*.bin
+*.onnx
+.DS_Store
