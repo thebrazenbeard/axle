@@ -58,6 +58,15 @@ Run verification with:
 
 ```bash
 make test
+python scripts/validate_repository.py
+node --check ui/app.js
+```
+
+On Windows, where GNU make may not be installed, use:
+
+```powershell
+py -3 scripts/validate_repository.py
+node --check ui/app.js
 ```
 
 ## Repository map
@@ -77,6 +86,7 @@ make test
 - `docs/ROADMAP.md` — staged implementation plan.
 - `docs/RESEARCH_NOTES.md` — source-backed design choices.
 - `deploy/systemd/` — Linux service template.
+- `state/AXLE_CONTINUATION_V2.md` — current source/qualification checkpoint; V1 is historical provenance.
 
 ## Status
 
