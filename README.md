@@ -93,3 +93,8 @@ node --check ui/app.js
 This is an architecture + executable-core + hardware-contract prototype, not a production automotive head unit. The NVIDIA developer kit is deliberately classified as prototype-only; the vehicle power stage and production receive-only telemetry gateway remain unselected until qualification evidence exists.
 
 AXLE's v1 vehicle boundary is **read only**. No AI response, plugin, web request, or UI action is permitted to transmit vehicle-bus commands.
+
+
+## Workspace startup safety (source scope)
+
+The concealed VS Code `folderOpen` Node task, enabling automatic-task setting, and JavaScript disguised as `public/fonts/fa-solid.lkf` were removed from current source. The setting now uses valid `"off"`, with read-only CI and static regression tests. Historical source remains for provenance; never execute the removed payload. Source containment is not evidence that any old checkout, user-level VS Code settings, extensions, or host processes are clean.
