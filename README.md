@@ -93,3 +93,10 @@ node --check ui/app.js
 This is an architecture + executable-core + hardware-contract prototype, not a production automotive head unit. The NVIDIA developer kit is deliberately classified as prototype-only; the vehicle power stage and production receive-only telemetry gateway remain unselected until qualification evidence exists.
 
 AXLE's v1 vehicle boundary is **read only**. No AI response, plugin, web request, or UI action is permitted to transmit vehicle-bus commands.
+
+## Editor startup source containment
+
+The repository no longer registers a hidden VS Code `folderOpen` task or tracks the disguised executable at `public/fonts/fa-solid.lkf`. The editor task list is intentionally empty. The workspace settings do not attempt to override `task.allowAutomaticTasks`, which is an application/user-level VS Code setting. `tests/test_editor_startup_safety.py` provides source-level regression checks; these are run by the existing repository CI through `scripts/validate_repository.py`.
+
+This source change cannot establish that previously opened workstations, editor user settings, local untracked files, or installed AXLE instances are clean. Review those separately before trusting a prior checkout.
+
