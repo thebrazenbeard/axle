@@ -32,7 +32,9 @@ AXLE turns a Linux edge computer mounted in the vehicle into a private, offline-
 | Vehicle telemetry | Linux SocketCAN | No |
 | Tether management | NetworkManager | Only for WAN |
 
-The runnable v0.2 core integrates the OpenAI-compatible local endpoint exposed by `llama.cpp` and an executable local push-to-talk path through PipeWire, whisper.cpp, Piper, and PipeWire playback. Wake-word and physical-button trigger types are policy-bound seams; the wake-word detector itself is still a remaining Stage 1 item.
+The runnable v0.2 core integrates the OpenAI-compatible local endpoint exposed by `llama.cpp` and an executable local push-to-talk path through PipeWire, whisper.cpp, Piper, and PipeWire playback. Wake-word and physical-button trigger types are policy-bound seams; the wake-word detector itself is still a remaining Stage 1 item. These voice tools, models, and audio devices must be installed/configured separately; the repository does not bundle them.
+
+**Current sensor boundary:** The interaction policy reads `safety.motion_state` from the TOML configuration. Live vehicle-motion sensing and a receive-only SocketCAN telemetry gateway are reference-design work, **not wired into the runnable core**. Treat a manually selected `parked` state as a bench-test setting, not proof that a vehicle is stationary. The HTTP UI only exposes the touch-trigger seam; it cannot self-assert a trusted wake-word or physical-button event.
 
 ## Quick start
 
@@ -44,6 +46,8 @@ PYTHONPATH=src python -m axle.server --config config/axle.local.toml
 ```
 
 Then open `http://127.0.0.1:8787`.
+
+The prototype HTTP server has **no caller authentication**. Keep the default loopback bind; do not expose it directly to a shared LAN or the internet. A production host must provide independent authentication, request authorization, network isolation, and verified sensor input before any protected effect.
 
 The example config fails closed with motion state `unknown`, so manual text is locked. **For a stationary bench/demo only**, edit `config/axle.local.toml` and set:
 
@@ -74,7 +78,7 @@ node --check ui/app.js
 - `src/axle/` — Core, local-LLM adapter, voice runtime, policy, and tether status.
 - `ui/` — low-distraction touchscreen UI with parked-only touch push-to-talk.
 - `config/` — safe defaults plus a Jetson voice example.
-- `hardware/` — tested hardware requirements, reference BOM, and power budget.
+- `hardware/` — machine-readable hardware constraints, candidate reference BOM, and estimated power budget; their structural validation is not physical hardware qualification.
 - `docs/ARCHITECTURE.md` — subsystem boundaries and data flow.
 - `docs/VOICE_RUNTIME.md` — executable local voice path and remaining Stage 1 work.
 - `docs/HARDWARE_REQUIREMENTS.md` — human-readable hardware contract.
