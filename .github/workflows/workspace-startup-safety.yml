@@ -6,6 +6,12 @@ jobs:
   editor-autostart:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Check editor source and font provenance without execution
+        run: python3 scripts/check_editor_source_safety.py
       - name: Reject hidden workspace startup execution
-        run: python3 -m unittest discover -s tests -p test_workspace_startup_safety.py -v
+        run: |
+          python3 -m unittest discover -s tests -p test_workspace_startup_safety.py -v
+          python3 -m unittest discover -s tests -p test_editor_source_guard.py -v
