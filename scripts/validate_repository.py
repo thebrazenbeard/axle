@@ -7,12 +7,20 @@ import sys
 import tomllib
 import unittest
 
+from check_editor_source_safety import check_tree
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 TESTS = ROOT / "tests"
 
 
 def main() -> int:
+    issues = check_tree(ROOT)
+    if issues:
+        for issue in issues:
+            print(f"AXLE editor-source safety failed: {issue}")
+        return 1
+
     sys.path.insert(0, str(SRC))
 
     if not compileall.compile_dir(SRC, quiet=1):
