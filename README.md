@@ -102,3 +102,9 @@ AXLE's v1 vehicle boundary is **read only**. No AI response, plugin, web request
 ## Workspace startup safety (source scope)
 
 The concealed VS Code `folderOpen` Node task, enabling automatic-task setting, and JavaScript disguised as `public/fonts/fa-solid.lkf` were removed from current source. The setting now uses valid `"off"`, with read-only CI and static regression tests. Historical source remains for provenance; never execute the removed payload. Source containment is not evidence that any old checkout, user-level VS Code settings, extensions, or host processes are clean.
+
+## Editor startup containment — tracked source (2026-11-20)
+
+The tracked `main` source formerly contained a concealed VS Code `folderOpen` task invoking obfuscated `.vscode/ini` through Node. The task list is now empty, `task.allowAutomaticTasks` is explicitly `"off"`, and the obfuscated file is removed from this source tree. Historical Git source remains for investigation.
+
+**Limits:** This is source-only containment, not proof that older checkouts, editor extensions, user/global settings, local credentials, or any previous host execution are safe. Do not execute historical suspect assets.
